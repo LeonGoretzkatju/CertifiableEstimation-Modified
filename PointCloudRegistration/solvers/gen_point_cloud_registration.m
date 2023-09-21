@@ -9,19 +9,24 @@ if ~isfield(problem, 'translationBound'); problem.translationBound = 10.0; end
 if ~isfield(problem, 'noiseSigma'); problem.noiseSigma = 0.01; end
 
 N                   = problem.N;
+SourcePCD           = problem.SourcePCD;
 outlierRatio        = problem.outlierRatio;
 translationBound    = problem.translationBound;
 noiseSigma          = problem.noiseSigma;
 
 % random point cloud A
-cloudA              = randn(3,N);
+% cloudA              = randn(3,N);
+cloudA              = SourcePCD(:,10:N+9);
 % random ground-truth transformation
 R_gt                = rand_rotation;
 t_gt                = randn(3,1);
 t_gt                = t_gt/norm(t_gt); 
 t_gt                = (translationBound) * rand * t_gt;
 % point cloud B, transformed and add noise
+% TargetPCD           = R_gt * SourcePCD + t_gt + noiseSigma * randn(3,size(SourcePCD,2));
 cloudB              = R_gt * cloudA + t_gt + noiseSigma * randn(3,N);
+% cloudB              = R_gt * cloudA + t_gt;
+% cloudB              = TargetPCD(:,100:100+N);
 % add outliers 
 nrOutliers          = round(N * outlierRatio);
 if (N - nrOutliers) < 3

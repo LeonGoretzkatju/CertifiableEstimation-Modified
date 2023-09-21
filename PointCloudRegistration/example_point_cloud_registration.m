@@ -7,18 +7,25 @@ clc; clear; close all; restoredefaultpath
 spotpath    = '../spotless';
 stridepath  = '../STRIDE';
 manoptpath  = '../manopt';
-mosekpath   = '../../mosek';
-sdpnalpath  = '../../SDPNAL+v1.0';
+mosekpath   = '../mosek';
+sdpnalpath  = '../SDPNAL+v1.0';
 addpath('../utils')
 addpath('./solvers')
+
+%% read the source point cloud from data folder
+bunnypcd = pcread("data\bun_zipper_res3.ply");
+bunnyxyz = double(bunnypcd.Location)';
+% pcshow(bunnypcd);
+
 
 %% choose if run GNC for STRIDE
 rungnc      = true;
 
 %% generate random point cloud registration problem
+problem.SourcePCD        = bunnyxyz;
 problem.N                = 10;
-problem.outlierRatio     = 0.2;
-problem.noiseSigma       = 0.01;
+problem.outlierRatio     = 0.6;
+problem.noiseSigma       = 0.000001;
 problem.translationBound = 10.0;
 problem                  = gen_point_cloud_registration(problem);
 
@@ -95,3 +102,10 @@ if rungnc
     infostride.time = [infostride.time, gnc.time];
 end
 fprintf('\n\n\n\n\n')
+
+bunnyxyz_moving1              = infostride.R_est * bunnyxyz + infostride.t_est;
+bunnyxyz_gt                   = problem.R_gt * bunnyxyz + problem.t_gt;
+target_bunnyxyz1 = pointCloud(bunnyxyz_moving1');
+target_bunnyxyz1_gt = pointCloud(bunnyxyz_gt');
+figure;
+pcshowpair(target_bunnyxyz1_gt,target_bunnyxyz1);
