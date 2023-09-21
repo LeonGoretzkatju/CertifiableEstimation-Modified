@@ -24,7 +24,7 @@ rungnc      = true;
 %% generate random point cloud registration problem
 problem.SourcePCD        = bunnyxyz;
 problem.N                = 100;
-problem.outlierRatio     = 0.96;
+problem.outlierRatio     = 0.97;
 problem.noiseSigma       = 0.000001;
 problem.translationBound = 10.0;
 problem                  = gen_point_cloud_registration(problem);
