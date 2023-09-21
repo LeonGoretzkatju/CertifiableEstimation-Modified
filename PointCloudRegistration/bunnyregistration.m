@@ -14,7 +14,8 @@ addpath('./solvers')
 
 %% read point cloud, find the keypoints and feature matches
 bunnypcd = pcread("data\bun_zipper_res3.ply");
-SourcePCD = pcdownsample(bunnypcd,"gridAverage",0.005);
+% SourcePCD = pcdownsample(bunnypcd,"gridAverage",0.001);
+SourcePCD = bunnypcd;
 bunnyxyz = bunnypcd.Location';
 translationBound = 0.0;
 noiseSigma       = 0.0;
@@ -24,7 +25,8 @@ t_gt                = t_gt/norm(t_gt);
 t_gt                = (translationBound) * rand * t_gt;
 bunnyxyz_moving              = R_gt * bunnyxyz + t_gt;
 target_bunnyxyz = pointCloud(bunnyxyz_moving');
-TargetPCD = pcdownsample(target_bunnyxyz,"gridAverage",0.005);
+% TargetPCD = pcdownsample(target_bunnyxyz,"gridAverage",0.001);
+TargetPCD = target_bunnyxyz;
 % pcshowpair(bunnypcd,target_bunnyxyz);
 [SourceFeature,SourceID] = extractFPFHFeatures(SourcePCD);
 [TargetFeature,TargetID] = extractFPFHFeatures(TargetPCD);
@@ -40,8 +42,8 @@ title("Matched Points")
 rungnc      = true;
 
 %% generate random point cloud registration problem
-if size(indexPairs,1) > 10
-    problem.N = 10;
+if size(indexPairs,1) > 30
+    problem.N = 30;
 else
     problem.N = size(indexPairs,1);
 end
